@@ -6,8 +6,8 @@ from utils import create_zip
 import streamlit as st
 
 with st.sidebar:
-    tk_assembly = st.text_input("توکنی که از سایت اسمبلی اِی آی دات کام دریافت کردید وارد کنید", type="password")
-    tk_api_audio = st.text_input("توکنی که از سایت اِی پی آی دات آدیو دریافت کردید وارد کنید", type="password")
+    tk_assembly = st.text_input("assemblyai.com - توکنی که از سایت اسمبلی اِی آی دات کام دریافت کردید وارد کنید", type="password")
+    tk_api_audio = st.text_input("api.audio - توکنی که از سایت اِی پی آی دات آدیو دریافت کردید وارد کنید", type="password")
     speed = st.slider("سرعت صدا را انتخاب کنید", 50, 120, 80)
     voice = st.selectbox("کدام صدا را می خواهید؟", ("liam", "sonia", "aria", "ryan"))
 
