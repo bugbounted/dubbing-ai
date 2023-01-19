@@ -8,19 +8,19 @@ import streamlit as st
 with st.sidebar:
     tk_assembly = st.text_input("TOKEN ASSEMBLY AI", type="password")
     tk_api_audio = st.text_input("TOKEN API AUDIO", type="password")
-    speed = st.slider("سرعت صدا را انتخاب کنید", 50, 120, 80)
-    voice = st.selectbox("کدام صدا را می خواهید؟", ("liam", "sonia", "aria", "ryan"))
+    speed = st.slider("Select the voice speed", 50, 120, 80)
+    voice = st.selectbox("Which voice you want?", ("liam", "sonia", "aria", "ryan"))
 
 
 st.title(
-    """ دوبله هوش مصنوعی
-سیستم ویدئو دوبله سرتاسر.
+    """ Dubbing AI
+End-to-end dubbing video system.
 """
 )
 
-p_name = st.text_input("یک نام برای این پروژه درج کنید")
+p_name = st.text_input("Insert a name for this Project")
 
-uploaded_file = st.file_uploader("یک ویدیو را انتخاب کنید")
+uploaded_file = st.file_uploader("Choose a video")
 if uploaded_file is not None:
     bytes_data = uploaded_file.getvalue()
     
@@ -29,23 +29,23 @@ if uploaded_file is not None:
 
     st.video(bytes_data)
 
-if st.button("دوبله"):
+if st.button("Dubbing"):
     if not tk_assembly or not tk_api_audio :
-        st.error('هر دو توکن باید ارائه شوند')
+        st.error('Both Tokens must be provided')
         st.stop()
-    with st.spinner("در انتظار تولید زیرنویس..."):
+    with st.spinner("Waiting for subtitle generation..."):
         headers, sub_endpoint = send_to_assembly(bytes_data, auth=tk_assembly)
         polling_response = requests.get(sub_endpoint, headers=headers)
 
         while polling_response.json()["status"] != "completed":
             sleep(5)
-            print("پردازش رونوشت ...")
+            print("Transcript processing ...")
             try:
                 polling_response = requests.get(sub_endpoint, headers=headers)
             except:
-                print("رونویسی ناموفق")
+                print("Failed transcription")
 
-    st.success("زیرنویس ایجاد شد، اکنون ویدیو شما را دوبله می کنم")
+    st.success("Subtitle generated, now I am dubbing your video")
     response_srt = requests.get(f"{sub_endpoint}/srt", headers=headers)
 
     subtitle = response_srt.text.split("\n")
@@ -53,7 +53,7 @@ if st.button("دوبله"):
     with open(f"{p_name}.srt", "w") as _file:
         _file.write(response_srt.text)
 
-    with st.spinner("منتظر دوبله..."):
+    with st.spinner("Waiting for dubbing..."):
         final_video, audio_file = dubbing(
             p_name,
             subtitle,
@@ -65,13 +65,13 @@ if st.button("دوبله"):
 
     video_file = open(f"{final_video}", "rb")
     video_bytes = video_file.read()
-    st.success("ویدیوی شما آماده است!")
+    st.success("Your video is ready!")
     st.video(video_bytes)
 
     create_zip(p_name, f'{p_name}.srt',
                               final_video, audio_file)
  
-    st.write("برای دانلود فایل های تولید شده اینجا کلیک کنید")
+    st.write("Click here to download the generated files")
     with open(f"{p_name}.zip", "rb") as fp:
         btn = st.download_button(
             label="Download ZIP",
