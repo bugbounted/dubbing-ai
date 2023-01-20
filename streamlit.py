@@ -79,3 +79,4 @@ if st.button("دوبله"):
             file_name="mydubbedvideo.zip",
             mime="application/zip"
         )
+st.write("Streamlit version:", st.__version__)
